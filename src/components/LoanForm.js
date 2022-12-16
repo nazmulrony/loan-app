@@ -6,20 +6,13 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const LoanForm = () => {
     const { register, formState: { errors }, handleSubmit } = useForm();
-    const [startDate, setStartDate] = useState(new Date());
     const [birthDate, setBirthDate] = useState(new Date());
     const [toggleState, setToggleState] = useState(1);
-    const handleSaveLoanData = (event) => {
-        event.preventDefault();
-        const form = event.target;
-        const name = form.name.value;
-        const age = form.age.value;
-        const account = form.account.value;
-        console.log(name, age, account);
+    const handleSaveLoanData = (data) => {
+        const dateOfBirth = birthDate.toLocaleDateString();
 
 
     }
-    console.log(startDate);
     return (
         <div className='mx-auto w-2/3 mt-10 bg-gray-200 border'>
             <div className='flex gap-6'>
@@ -76,8 +69,9 @@ const LoanForm = () => {
                                 {...register("dateOfBirth", {
                                     required: 'Date of birth is required'
                                 })}
-                                selected={startDate}
-                                onChange={(date) => setStartDate(date)}
+                                className="p-2 w-full shadow-md shadow-black/5 rounded-md"
+                                selected={birthDate}
+                                onChange={(date) => setBirthDate(date)}
                             />
                             {errors.dateOfBirth && <p className='text-red-600 mt-1 text-sm'>{errors.dateOfBirth?.message}</p>}
                         </div>
@@ -164,9 +158,9 @@ const LoanForm = () => {
                             <input
                                 type="text"
                                 {...register("interestRate", {
-                                    required: 'GST number is required'
+                                    required: 'Interest rate is required'
                                 })}
-                                placeholder="Enter GST number"
+                                placeholder="Enter interest rate"
                                 className="p-2 w-full shadow-md shadow-black/5 rounded-md "
                             />
                             {errors.interestRate && <p className='text-red-600 mt-1 text-sm'>{errors.interestRate?.message}</p>}
@@ -174,29 +168,28 @@ const LoanForm = () => {
                     </div>
                     <div className=' flex gap-6 justify-between w-full'>
                         <div className='flex w-full flex-col items-start'>
+                            <label className="label">Income</label>
+                            <input
+                                type="text"
+                                {...register("income", {
+                                    required: 'Income is required'
+                                })}
+                                placeholder="Enter your income"
+                                className="p-2 w-full shadow-md shadow-black/5 rounded-md"
+                            />
+                            {errors.income && <p className='text-red-600 mt-1 text-sm'>{errors.income?.message}</p>}
+                        </div>
+                        <div className='flex w-full flex-col items-start'>
                             <label className="label">Loan Tenure</label>
                             <input
                                 type="text"
-                                {...register("loanTenure", {
-                                    required: 'Address is required'
+                                {...register("income", {
+                                    required: 'Loan tenure is required'
                                 })}
-                                placeholder="Enter your address"
+                                placeholder="Enter loan tenure (years)"
                                 className="p-2 w-full shadow-md shadow-black/5 rounded-md"
                             />
                             {errors.loanTenure && <p className='text-red-600 mt-1 text-sm'>{errors.loanTenure?.message}</p>}
-                        </div>
-                        <div className='flex w-full flex-col items-start'>
-                            <label className="label">Date</label>
-                            {/* <input
-                                type="email"
-                                {...register("email", {
-                                    required: 'Email is required'
-                                })}
-                                placeholder="Enter your email"
-                                className="p-2 w-full shadow-md shadow-black/5 rounded-md "
-                            /> */}
-                            <DatePicker className='w-full p-2 shadow-md shadow-black/5 rounded-md' selected={startDate} onChange={(date) => setStartDate(date)} />
-                            {errors.email && <p className='text-red-600 mt-1 text-sm'>{errors.email?.message}</p>}
                         </div>
                     </div>
                     <div className='flex justify-end mt-6'>
