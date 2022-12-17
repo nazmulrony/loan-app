@@ -3,13 +3,16 @@ import { useForm } from 'react-hook-form';
 import { AiOutlineDoubleRight } from 'react-icons/ai';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { toast } from 'react-hot-toast';
 
 const LoanForm = () => {
     const { register, formState: { errors }, handleSubmit, reset } = useForm();
     const [birthDate, setBirthDate] = useState(new Date());
     const [toggleState, setToggleState] = useState(1);
+    const [loading, setLoading] = useState(false);
     //form handle 
     const handleSaveLoanData = (data) => {
+        setLoading(true);
         const dateOfBirth = birthDate.toLocaleDateString();
         const loanData = {
             name: `${data.firstName} ${data.lastName}`,
@@ -34,8 +37,12 @@ const LoanForm = () => {
         })
             .then(res => res.json())
             .then(formData => {
-                reset();
+                if (formData.acknowledged) {
+                    reset();
+                    toast.success('Your application successfully submitted.')
+                }
                 console.log(formData);
+                setLoading(false);
             })
 
     }
@@ -233,7 +240,7 @@ const LoanForm = () => {
                     </div>
                     {Object.keys(errors)?.length > 0 && <p className='text-red-600 text-left mt-4'>Please fix the red marked fields</p>}
                     <div className='flex justify-end mt-6'>
-                        <input type='submit' value="Submit" className='px-6 py-2 cursor-pointer bg-blue-600 rounded-lg text-white flex items-center hover:bg-blue-700 duration-300' />
+                        <input type='submit' value={loading ? 'Loading...' : 'Submit'} className='px-6 py-2 cursor-pointer bg-blue-600 rounded-lg text-white flex items-center hover:bg-blue-700 duration-300' />
                     </div>
                 </div>
             </form>
