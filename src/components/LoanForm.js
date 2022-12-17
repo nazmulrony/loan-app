@@ -9,7 +9,7 @@ const LoanForm = () => {
     const [birthDate, setBirthDate] = useState(new Date());
     const [toggleState, setToggleState] = useState(1);
     //form handle 
-    const handleSaveLoanData = (event, data) => {
+    const handleSaveLoanData = (data) => {
         const dateOfBirth = birthDate.toLocaleDateString();
         const loanData = {
             name: `${data.firstName} ${data.lastName}`,
@@ -24,7 +24,8 @@ const LoanForm = () => {
             loanTenure: data.loanTenure,
             income: data.income
         }
-        fetch("http://localhost:5000/loans", {
+        console.log(loanData);
+        fetch("https://loan-app-server.vercel.app/loans", {
             method: 'POST',
             headers: {
                 'content-type': 'application/json'
@@ -33,8 +34,8 @@ const LoanForm = () => {
         })
             .then(res => res.json())
             .then(formData => {
+                reset();
                 console.log(formData);
-                event.target.reset();
             })
 
     }

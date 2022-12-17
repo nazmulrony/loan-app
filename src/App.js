@@ -1,11 +1,31 @@
 
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './App.css';
+import LoanApplications from './components/LoanApplications';
 import LoanForm from './components/LoanForm';
+import Main from './layouts/Main';
 
 function App() {
+  const router = createBrowserRouter([
+    {
+      path: '/',
+      element: <Main />,
+      children: [
+        {
+          path: '/',
+          element: <LoanForm />
+        },
+        {
+          path: '/applications',
+          element: <LoanApplications />
+        },
+      ]
+    }
+  ])
+
   return (
-    <div className="App">
-      <LoanForm />
+    <div>
+      <RouterProvider router={router} />
     </div>
   );
 }
