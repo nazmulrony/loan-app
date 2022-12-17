@@ -5,12 +5,11 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const LoanForm = () => {
-    const { register, formState: { errors }, handleSubmit } = useForm();
+    const { register, formState: { errors }, handleSubmit, reset } = useForm();
     const [birthDate, setBirthDate] = useState(new Date());
     const [toggleState, setToggleState] = useState(1);
     //form handle 
-    const handleSaveLoanData = (data) => {
-        console.log('Button clicked');
+    const handleSaveLoanData = (event, data) => {
         const dateOfBirth = birthDate.toLocaleDateString();
         const loanData = {
             name: `${data.firstName} ${data.lastName}`,
@@ -25,12 +24,23 @@ const LoanForm = () => {
             loanTenure: data.loanTenure,
             income: data.income
         }
-        console.log(loanData);
-
+        fetch("http://localhost:5000/loans", {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(loanData)
+        })
+            .then(res => res.json())
+            .then(formData => {
+                console.log(formData);
+                event.target.reset();
+            })
 
     }
+    // console.log(errors);
     return (
-        <div className='mx-auto lg:w-2/3 mt-10 bg-gray-200 border'>
+        <div className='mx-auto lg:w-2/3 mt-10 bg-gray-200 border shadow-lg shadow-black/10'>
             <div className='flex gap-6'>
                 <div onClick={() => setToggleState(1)} className={`cursor-pointer px-6 py-2 ${toggleState === 1 ? 'bg-gray-50  border-t-2 border-blue-600' : ''} `}>Tab 1</div>
                 <div onClick={() => setToggleState(2)} className={`cursor-pointer px-6 py-2 ${toggleState === 2 ? 'bg-gray-50  border-t-2 border-blue-600' : ''}`}>Tab 2</div>
@@ -73,7 +83,7 @@ const LoanForm = () => {
                                 type="text"
                                 {...register("phone", {
                                     required: 'Phone number is required',
-                                    pattern: { value: /^(\+\d{1,3}[- ]?)?\d{10}$/, message: 'Invalid phone number' }
+                                    pattern: { value: /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/, message: 'Invalid phone number' }
                                 })}
                                 placeholder="Enter your phone number"
                                 className="p-2 w-full shadow-md shadow-black/5 rounded-md border"
@@ -161,7 +171,8 @@ const LoanForm = () => {
                             <input
                                 type="text"
                                 {...register("amount", {
-                                    required: 'Business name is required'
+                                    required: 'Business name is required',
+                                    pattern: { value: /^[1-9]\d*(\.\d+)?$/, message: 'Please enter a valid loan amount' }
                                 })}
                                 placeholder="Enter your business name"
                                 className="p-2 w-full shadow-md shadow-black/5 rounded-md border"
@@ -197,7 +208,8 @@ const LoanForm = () => {
                             <input
                                 type="text"
                                 {...register("income", {
-                                    required: 'Income is required'
+                                    required: 'Income is required',
+                                    pattern: { value: /^[1-9]\d*(\.\d+)?$/, message: 'Please enter a valid income amount' }
                                 })}
                                 placeholder="Enter your income"
                                 className="p-2 w-full shadow-md shadow-black/5 rounded-md border"
@@ -218,6 +230,7 @@ const LoanForm = () => {
                             {errors.loanTenure && <p className='text-red-600 mt-1 text-sm'>{errors.loanTenure?.message}</p>}
                         </div>
                     </div>
+                    {Object.keys(errors)?.length > 0 && <p className='text-red-600 text-left mt-4'>Please fix the red marked fields</p>}
                     <div className='flex justify-end mt-6'>
                         <input type='submit' value="Submit" className='px-6 py-2 cursor-pointer bg-blue-600 rounded-lg text-white flex items-center hover:bg-blue-700 duration-300' />
                     </div>
